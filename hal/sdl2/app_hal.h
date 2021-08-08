@@ -9,7 +9,7 @@ extern "C" {
 
 
 void hal_setup(void);
-void hal_loop(void (*fun_ptr)(uint32_t));
+void hal_loop(void);
 
 
 #ifdef __cplusplus

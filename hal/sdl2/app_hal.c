@@ -39,8 +39,8 @@ void hal_setup(void)
 
     static lv_disp_draw_buf_t disp_buf;
     static lv_color_t buf1[LV_HOR_RES * 10];                     /*Declare a buffer for 10 lines*/
-    // static lv_color_t buf2[LV_HOR_RES * 10];
-    lv_disp_draw_buf_init(&disp_buf, buf1, NULL, LV_HOR_RES * 10);    /*Initialize the display buffer*/
+    static lv_color_t buf2[LV_HOR_RES * 10];
+    lv_disp_draw_buf_init(&disp_buf, buf1, buf2, LV_HOR_RES * 10);    /*Initialize the display buffer*/
     static lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);            /*Basic initialization*/
     disp_drv.flush_cb = monitor_flush;      /*Used when `LV_VDB_SIZE != 0` in lv_conf.h (buffered drawing)*/
@@ -66,13 +66,10 @@ void hal_setup(void)
     SDL_CreateThread(tick_thread, "tick", NULL);
 }
 
-void hal_loop(void (*fun_ptr)(uint32_t))
+void hal_loop()
 {
     while(1) {
         SDL_Delay(5);
-        if(fun_ptr != NULL) {
-            fun_ptr(5);
-        }
         lv_task_handler();
     }
 }

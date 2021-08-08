@@ -7,7 +7,7 @@
 
 #define CANVAS_WIDTH LV_HOR_RES
 #define CANVAS_HEIGHT LV_VER_RES
-#define WAVE_COUNT 4
+#define WAVE_COUNT 8
 #define WAVE_POINT_COUNT 40
 #define WAVE_WATER_LEVEL (LV_VER_RES/3)
 #define WAVE_WATER_HEIGHT (LV_VER_RES/8)
@@ -17,7 +17,7 @@
 #define WAVE_GRADIENT_START (lv_palette_darken(WAVE_PALETTE, 4))
 #define WAVE_GRADIENT_END (lv_palette_darken(WAVE_PALETTE, 3))
 #define WAVE_COLOR (lv_palette_lighten(WAVE_PALETTE, 2))
-#define WAVE_OPACITY (LV_OPA_100)
+#define WAVE_OPACITY (LV_OPA_50)
 #define PI2 (M_PI * 2)
 
 static uint32_t g_seed = 2378462;
@@ -32,15 +32,15 @@ public:
     m_LH = random(30);
     m_SY = m_LH + WAVE_WATER_HEIGHT + WAVE_WATER_LEVEL;
 
-    m_Speed = -(0.f + (((float)random(20,7) / 2.f) + .1f) / 10000.f);
+    m_Speed = -(0.f + (((float)random(15,3) / 2.f) + .1f) / 10000.f);
     std::cout << "Wave #" << m_Index << " selected speed " << m_Speed << std::endl;
 
     lv_draw_line_dsc_init(&m_LineDesc);
     m_LineDesc.color = WAVE_COLOR;
     m_LineDesc.width = m_Index % 3 == 0 ? 2 : 1;
-    m_LineDesc.opa = LV_OPA_50;
+    m_LineDesc.opa = WAVE_OPACITY;
   }
-  void tick(uint32_t dtMs, lv_obj_t* rawCanvas) {
+  void tick(lv_obj_t* rawCanvas) {
     for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
       float r = (float)x / (WAVE_POINT_COUNT - 1);
       float px = WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
@@ -51,7 +51,7 @@ public:
     lv_canvas_draw_line(rawCanvas, points, WAVE_POINT_COUNT, &m_LineDesc);
   }
 private:
-  inline float getTimer() { return lv_tick_get() + 100000; }
+  inline float getTimer() { return lv_tick_get()+10000; }
   float m_PX;
   float m_PY;
   uint32_t m_LH;
@@ -64,28 +64,35 @@ private:
 };
 uint32_t Wave::accumulator = 0;
 
+#define MSPF (1000/60)
 class Canvas
 {
 public:
-  Canvas(lv_obj_t* rawCanvas) : m_Waves(WAVE_COUNT), m_Canvas(rawCanvas) {
-    lv_draw_rect_dsc_init(&rect_dsc);
-    rect_dsc.bg_grad_dir = LV_GRAD_DIR_VER;
-    rect_dsc.bg_opa = LV_OPA_COVER;
-    rect_dsc.bg_color = WAVE_GRADIENT_START;
-    rect_dsc.bg_grad_color = WAVE_GRADIENT_END;
-    for(int i = 0; i < WAVE_COUNT; ++i)
-      m_Waves.push_back(Wave());
-  }
-  
-  void tick(uint32_t dtMs) {
-    lv_canvas_draw_rect(m_Canvas, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, &rect_dsc);
-    for(auto wave : m_Waves) wave.tick(dtMs, m_Canvas);
+  Canvas(lv_obj_t* rawCanvas) : m_Canvas(rawCanvas) {
+    lv_draw_rect_dsc_init(&m_RectDsc);
+    m_RectDsc.bg_grad_dir = LV_GRAD_DIR_VER;
+    m_RectDsc.bg_opa = LV_OPA_COVER;
+    m_RectDsc.bg_color = WAVE_GRADIENT_START;
+    m_RectDsc.bg_grad_color = WAVE_GRADIENT_END;
+
+    lv_timer_create(Canvas::tickTrampoline, MSPF, static_cast<void*>(this));
+    lv_timer_set_repeat_count(m_Timer, -1);
   }
 
 private:
-  lv_draw_rect_dsc_t rect_dsc;
+  static void tickTrampoline(lv_timer_t * timer)
+  {
+    static_cast<Canvas*>(timer->user_data)->tick();
+  }
+  void tick() {
+    lv_canvas_draw_rect(m_Canvas, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, &m_RectDsc);
+    for(int i = 0; i < WAVE_COUNT; ++i)
+      m_Waves[i].tick(m_Canvas);
+  }
+  lv_timer_t* m_Timer;
+  lv_draw_rect_dsc_t m_RectDsc;
   lv_coord_t m_TextX;
-  std::vector<Wave> m_Waves;
+  Wave m_Waves[WAVE_COUNT];
   lv_obj_t* m_Canvas;
 };
 
@@ -106,6 +113,9 @@ void build_styles(void) {
   lv_style_set_img_recolor(&style_icon_alpha8, lv_theme_get_color_primary(NULL));
 }
 
+void service_canvas() {
+}
+
 void build_ui(void) {
   LV_IMG_DECLARE(humidicon);
 
@@ -114,12 +124,6 @@ void build_ui(void) {
   lv_canvas_set_buffer(canvas, buffer, CANVAS_WIDTH, CANVAS_HEIGHT, LV_IMG_CF_TRUE_COLOR);
   lv_obj_center(canvas);
   smartCanvas = new Canvas(canvas);
-}
-
-void service_canvas(uint32_t unused) {
-  static uint32_t lastTick = 0;
-  smartCanvas->tick(lv_tick_elaps(lastTick));
-  lastTick = lv_tick_get();
 }
 
 int main(void) {
@@ -131,5 +135,5 @@ int main(void) {
   build_styles();
   build_ui();
 
-  hal_loop(service_canvas);
+  hal_loop();
 }
