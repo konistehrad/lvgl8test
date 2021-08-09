@@ -28,19 +28,28 @@ inline int random(int max, int min = 0) { return (fast_rand() % (max-min)) + min
 class Wave
 {
 public:
-  Wave() : m_Index(++accumulator) {
+  Wave() : m_Index(++accumulator), m_Line(NULL) {
     m_LH = random(30);
     m_SY = m_LH + WAVE_WATER_HEIGHT + WAVE_WATER_LEVEL;
-
     m_Speed = -(0.f + (((float)random(15,3) / 2.f) + .1f) / 10000.f);
-    std::cout << "Wave #" << m_Index << " selected speed " << m_Speed << std::endl;
+    // std::cout << "Wave #" << m_Index << " selected speed " << m_Speed << std::endl;
 
-    lv_draw_line_dsc_init(&m_LineDesc);
-    m_LineDesc.color = WAVE_COLOR;
-    m_LineDesc.width = m_Index % 3 == 0 ? 2 : 1;
-    m_LineDesc.opa = WAVE_OPACITY;
+    lv_style_init(&m_LineStyle);
+    lv_style_set_line_width(&m_LineStyle, m_Index % 3 == 0 ? 2 : 1);
+    lv_style_set_line_color(&m_LineStyle, WAVE_COLOR);
+    lv_style_set_line_opa(&m_LineStyle, WAVE_OPACITY);
   }
-  void tick(lv_obj_t* rawCanvas) {
+  ~Wave() {
+    if(m_Line != NULL) lv_obj_del(m_Line);
+    m_Line = NULL;
+  }
+  void init(lv_obj_t* parent) {
+    m_Line = lv_line_create(parent);
+    lv_line_set_points(m_Line, points, WAVE_POINT_COUNT);
+    lv_obj_add_style(m_Line, &m_LineStyle, 0);
+    lv_obj_center(m_Line);
+  }
+  void tick() {
     for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
       float r = (float)x / (WAVE_POINT_COUNT - 1);
       float px = WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
@@ -48,7 +57,7 @@ public:
       points[x].x = px;
       points[x].y = py;
     }
-    lv_canvas_draw_line(rawCanvas, points, WAVE_POINT_COUNT, &m_LineDesc);
+    lv_line_set_points(m_Line, points, WAVE_POINT_COUNT);
   }
 private:
   inline float getTimer() { return lv_tick_get()+10000; }
@@ -58,8 +67,9 @@ private:
   uint32_t m_SY;
   uint32_t m_Index;
   float m_Speed;
-  lv_draw_line_dsc_t m_LineDesc;
+  lv_obj_t* m_Line;
   lv_point_t points[WAVE_POINT_COUNT];
+  lv_style_t m_LineStyle;
   static uint32_t accumulator;
 };
 uint32_t Wave::accumulator = 0;
@@ -68,40 +78,56 @@ uint32_t Wave::accumulator = 0;
 class Canvas
 {
 public:
-  Canvas(lv_obj_t* rawCanvas) : m_Canvas(rawCanvas) {
-    lv_draw_rect_dsc_init(&m_RectDsc);
-    m_RectDsc.bg_grad_dir = LV_GRAD_DIR_VER;
-    m_RectDsc.bg_opa = LV_OPA_COVER;
-    m_RectDsc.bg_color = WAVE_GRADIENT_START;
-    m_RectDsc.bg_grad_color = WAVE_GRADIENT_END;
+  Canvas(lv_obj_t* parent, lv_style_t* style) : m_Timer(NULL), m_Obj(NULL) {
+    m_Obj = lv_obj_create(parent);
+    lv_obj_add_style(m_Obj, style, 0);
+    lv_obj_center(m_Obj);
 
-    lv_timer_create(Canvas::tickTrampoline, MSPF, static_cast<void*>(this));
+    m_Timer = lv_timer_create(Canvas::tickTrampoline, MSPF, static_cast<void*>(this));
     lv_timer_set_repeat_count(m_Timer, -1);
+
+    for(int i = 0; i < WAVE_COUNT; ++i)
+      m_Waves[i].init(m_Obj);
+  }
+  ~Canvas() {
+    if(m_Timer != NULL) lv_timer_del(m_Timer);
+    if(m_Obj != NULL) lv_obj_del(m_Obj);
   }
 
 private:
-  static void tickTrampoline(lv_timer_t * timer)
-  {
+  static void tickTrampoline(lv_timer_t * timer) {
     static_cast<Canvas*>(timer->user_data)->tick();
   }
   void tick() {
-    lv_canvas_draw_rect(m_Canvas, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, &m_RectDsc);
     for(int i = 0; i < WAVE_COUNT; ++i)
-      m_Waves[i].tick(m_Canvas);
+      m_Waves[i].tick();
   }
   lv_timer_t* m_Timer;
-  lv_draw_rect_dsc_t m_RectDsc;
-  lv_coord_t m_TextX;
+  lv_obj_t* m_Obj;
   Wave m_Waves[WAVE_COUNT];
-  lv_obj_t* m_Canvas;
 };
 
+static lv_color_t buffer[LV_CANVAS_BUF_SIZE_TRUE_COLOR(CANVAS_WIDTH, CANVAS_HEIGHT)];
 static Canvas* smartCanvas;
 static lv_obj_t* canvas;
+static lv_style_t style_back;
 static lv_style_t style_title;
 static lv_style_t style_icon_alpha8;
 void build_styles(void) {
-  lv_theme_default_init(NULL, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), LV_THEME_DEFAULT_DARK, &lv_font_montserrat_14);
+  lv_theme_t* def = lv_theme_default_init(
+    NULL, 
+    lv_palette_main(LV_PALETTE_BLUE), 
+    lv_palette_main(LV_PALETTE_RED), 
+    LV_THEME_DEFAULT_DARK, 
+    &lv_font_montserrat_14
+  );
+
+  lv_style_init(&style_back);
+  lv_style_set_bg_color(&style_back, WAVE_GRADIENT_START);
+  lv_style_set_bg_grad_color(&style_back, WAVE_GRADIENT_END);
+  lv_style_set_bg_grad_dir(&style_back, LV_GRAD_DIR_VER);
+  lv_style_set_min_width(&style_back, LV_HOR_RES);
+  lv_style_set_min_height(&style_back, LV_VER_RES);
 
   lv_style_init(&style_title);
   lv_style_set_text_font(&style_title, &lv_font_montserrat_26);
@@ -113,17 +139,8 @@ void build_styles(void) {
   lv_style_set_img_recolor(&style_icon_alpha8, lv_theme_get_color_primary(NULL));
 }
 
-void service_canvas() {
-}
-
 void build_ui(void) {
-  LV_IMG_DECLARE(humidicon);
-
-  static lv_color_t buffer[LV_CANVAS_BUF_SIZE_TRUE_COLOR(CANVAS_WIDTH, CANVAS_HEIGHT)];
-  canvas = lv_canvas_create(lv_scr_act());
-  lv_canvas_set_buffer(canvas, buffer, CANVAS_WIDTH, CANVAS_HEIGHT, LV_IMG_CF_TRUE_COLOR);
-  lv_obj_center(canvas);
-  smartCanvas = new Canvas(canvas);
+  smartCanvas = new Canvas(lv_scr_act(), &style_back);
 }
 
 int main(void) {
