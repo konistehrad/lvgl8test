@@ -68,8 +68,13 @@ void hal_setup(void)
 
 void hal_loop()
 {
-    while(1) {
-        SDL_Delay(5);
-        lv_task_handler();
-    }
+    SDL_Delay(5);
+    lv_task_handler();
+}
+
+void setup(void);
+void loop(void);
+int main(void) {
+  setup();
+  while(1) loop();
 }
