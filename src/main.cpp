@@ -4,10 +4,10 @@
 #include "app_hal.h"
 
 #define WAVE_FPS 30
-#define WAVE_COUNT 3
-#define WAVE_POINT_COUNT 20
+#define WAVE_COUNT 6
+#define WAVE_POINT_COUNT 40
 #define WAVE_WATER_LEVEL (0)
-#define WAVE_WATER_HEIGHT (LV_VER_RES/4)
+#define WAVE_WATER_HEIGHT (LV_VER_RES/6)
 #define WAVE_START_POS 0
 #define WAVE_END_POS (LV_HOR_RES)
 #define WAVE_PALETTE (LV_PALETTE_TEAL)
@@ -32,7 +32,7 @@ public:
   void init(lv_obj_t* parent) {
     m_LH = random(30);
     m_SY = m_LH + WAVE_WATER_HEIGHT + WAVE_WATER_LEVEL;
-    m_Speed = -(0.f + (((float)random(15,3) / 2.f) + .1f) / 10000.f);
+    m_Speed = -(0.f + (((float)random(20,3) / 2.f) + .1f) / 10000.f);
 
     lv_style_init(&m_LineStyle);
     lv_style_set_line_width(&m_LineStyle, m_Index % 3 == 0 ? 2 : 1);
