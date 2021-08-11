@@ -4,8 +4,8 @@
 #include "app_hal.h"
 
 #define WAVE_FPS 30
-#define WAVE_COUNT 8
-#define WAVE_POINT_COUNT 40
+#define WAVE_COUNT 3
+#define WAVE_POINT_COUNT 20
 #define WAVE_WATER_LEVEL (0)
 #define WAVE_WATER_HEIGHT (LV_VER_RES/4)
 #define WAVE_START_POS 0
@@ -13,8 +13,8 @@
 #define WAVE_PALETTE (LV_PALETTE_TEAL)
 #define WAVE_GRADIENT_START (lv_palette_darken(WAVE_PALETTE, 4))
 #define WAVE_GRADIENT_END (lv_palette_darken(WAVE_PALETTE, 3))
-#define WAVE_COLOR (lv_palette_lighten(WAVE_PALETTE, 2))
-#define WAVE_OPACITY (LV_OPA_20)
+#define WAVE_COLOR (lv_palette_darken(WAVE_PALETTE, 3))
+#define WAVE_OPACITY (LV_OPA_100)
 #define PI2 (M_PI * 2)
 
 static uint32_t g_seed = 2378462;
@@ -106,8 +106,7 @@ static lv_style_t style_icon_alpha8;
 static lv_obj_t* label;
 
 void build_ui(void) {
-
-  lv_theme_t* def = lv_theme_default_init(
+  lv_theme_default_init(
     NULL, 
     lv_color_white(), 
     lv_palette_main(LV_PALETTE_DEEP_ORANGE), 
@@ -117,8 +116,8 @@ void build_ui(void) {
 
   lv_style_init(&style_back);
   lv_style_set_bg_color(&style_back, WAVE_GRADIENT_START);
-  lv_style_set_bg_grad_color(&style_back, WAVE_GRADIENT_END);
-  lv_style_set_bg_grad_dir(&style_back, LV_GRAD_DIR_VER);
+  //lv_style_set_bg_grad_color(&style_back, WAVE_GRADIENT_END);
+  //lv_style_set_bg_grad_dir(&style_back, LV_GRAD_DIR_VER);
 
   lv_style_init(&style_title);
   lv_style_set_text_font(&style_title, &lv_font_montserrat_26);
