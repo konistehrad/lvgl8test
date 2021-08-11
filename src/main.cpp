@@ -7,7 +7,7 @@
 #define WAVE_COUNT 6
 #define WAVE_POINT_COUNT 40
 #define WAVE_WATER_LEVEL (0)
-#define WAVE_WATER_HEIGHT (LV_VER_RES/6)
+#define WAVE_WATER_HEIGHT (LV_VER_RES/7)
 #define WAVE_START_POS 0
 #define WAVE_END_POS (LV_HOR_RES)
 #define WAVE_PALETTE (LV_PALETTE_TEAL)
@@ -47,8 +47,8 @@ public:
   void tick() {
     for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
       float r = (float)x / (WAVE_POINT_COUNT - 1);
-      float px = WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
-      float py = m_SY + WAVE_WATER_HEIGHT * sin(r * r * PI2 + getTimer() * m_Speed);
+      float px = r * WAVE_END_POS; // WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
+      float py = m_SY + WAVE_WATER_HEIGHT * sinf(r * r * PI2 + getTimer() * m_Speed);
       points[x].x = px;
       points[x].y = py;
     }
