@@ -7,7 +7,7 @@
 #define WAVE_COUNT 6
 #define WAVE_POINT_COUNT 40
 #define WAVE_WATER_LEVEL (0)
-#define WAVE_WATER_HEIGHT (LV_VER_RES/7)
+#define WAVE_WATER_HEIGHT (LV_VER_RES/6)
 #define WAVE_START_POS 0
 #define WAVE_END_POS (LV_HOR_RES)
 #define WAVE_PALETTE (LV_PALETTE_TEAL)
@@ -15,11 +15,16 @@
 #define WAVE_GRADIENT_END (lv_palette_darken(WAVE_PALETTE, 3))
 #define WAVE_COLOR (lv_palette_darken(WAVE_PALETTE, 3))
 #define WAVE_OPACITY (LV_OPA_100)
-#define PI2 (M_PI * 2)
+#ifndef M_PI
+#define M_PI		3.14159265358979323846
+#endif
+#define M_PI2 (M_PI * 2)
 
 static uint32_t g_seed = 2378462;
 inline int fast_rand(void) { g_seed = (214013*g_seed+2531011); return (g_seed>>16)&0x7FFF; }
 inline int random(int max, int min = 0) { return (fast_rand() % (max-min)) + min; }
+
+static float cachedr2pi[WAVE_POINT_COUNT];
 
 // lvgl reimplementation of: https://board.flashkit.com/board/showthread.php?798917-psp-xmb-menu&p=4188350&viewfull=1#post4188350
 class Wave
@@ -33,6 +38,11 @@ public:
     m_LH = random(30);
     m_SY = m_LH + WAVE_WATER_HEIGHT + WAVE_WATER_LEVEL;
     m_Speed = -(0.f + (((float)random(20,3) / 2.f) + .1f) / 10000.f);
+    for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
+      float r = (float)x / (WAVE_POINT_COUNT - 1);
+      points[x].x = WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
+      if(m_Index == 1) cachedr2pi[x] = r * r * M_PI2;
+    }
 
     lv_style_init(&m_LineStyle);
     lv_style_set_line_width(&m_LineStyle, m_Index % 3 == 0 ? 2 : 1);
@@ -45,12 +55,9 @@ public:
     lv_obj_center(m_Line);
   }
   void tick() {
+    float speedFactor = getTimer() * m_Speed;
     for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
-      float r = (float)x / (WAVE_POINT_COUNT - 1);
-      float px = r * WAVE_END_POS; // WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
-      float py = m_SY + WAVE_WATER_HEIGHT * sinf(r * r * PI2 + getTimer() * m_Speed);
-      points[x].x = px;
-      points[x].y = py;
+      points[x].y = m_SY + WAVE_WATER_HEIGHT * cosf(cachedr2pi[x] + speedFactor);
     }
     lv_line_set_points(m_Line, points, WAVE_POINT_COUNT);
   }
