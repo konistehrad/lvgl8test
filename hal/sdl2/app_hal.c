@@ -6,7 +6,6 @@
 #include "indev/mousewheel.h"
 #include "indev/keyboard.h"
 
-
 /**
  * A task to measure the elapsed time for LittlevGL
  * @param data unused
@@ -17,8 +16,8 @@ static int tick_thread(void * data)
     (void)data;
 
     while(1) {
-        SDL_Delay(1);   /*Sleep for 5 millisecond*/
-        lv_tick_inc(1); /*Tell LittelvGL that 5 milliseconds were elapsed*/
+        SDL_Delay(1);   /*Sleep for 1 millisecond*/
+        lv_tick_inc(1); /*Tell LittelvGL that 1 milliseconds were elapsed*/
     }
 
     return 0;
@@ -66,14 +65,14 @@ void hal_setup(void)
     SDL_CreateThread(tick_thread, "tick", NULL);
 }
 
-void hal_loop()
+void hal_loop(void)
 {
     SDL_Delay(5);
     lv_task_handler();
 }
 
-void setup(void);
-void loop(void);
+extern void setup(void);
+extern void loop(void);
 int main(void) {
   setup();
   while(1) loop();
