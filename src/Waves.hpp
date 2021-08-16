@@ -43,10 +43,10 @@ public:
     m_LH = random(30);
     m_SY = m_LH + WAVE_WATER_HEIGHT + WAVE_WATER_LEVEL;
     m_Speed = -(0.f + (((float)random(20,3) / 2.f) + .1f) / 10000.f);
-    for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
-      float r = (float)x / (WAVE_POINT_COUNT - 1);
-      points[x].x = WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
-      if(m_Index == 1) cachedr2pi[x] = r * r * M_PI2;
+    for(int i = 0; i < WAVE_POINT_COUNT; ++i) {
+      float r = (float)i / (WAVE_POINT_COUNT - 1);
+      points[i].x = WAVE_START_POS + r * (WAVE_END_POS - WAVE_START_POS);
+      if(m_Index == 1) cachedr2pi[i] = r * r * M_PI2;
     }
 
     lv_style_init(&m_LineStyle);
@@ -61,8 +61,8 @@ public:
   }
   void tick() {
     float speedFactor = getTimer() * m_Speed;
-    for(int x = 0; x < WAVE_POINT_COUNT; ++x) {
-      points[x].y = m_SY + WAVE_WATER_HEIGHT * cosf(cachedr2pi[x] + speedFactor);
+    for(int i = 0; i < WAVE_POINT_COUNT; ++i) {
+      points[i].y = m_SY + WAVE_WATER_HEIGHT * cosf(cachedr2pi[i] + speedFactor);
     }
     lv_line_set_points(m_Line, points, WAVE_POINT_COUNT);
   }

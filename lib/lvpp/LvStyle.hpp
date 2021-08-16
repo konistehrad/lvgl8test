@@ -71,6 +71,13 @@ public:
   LvPPStyleProxy(bgImgRecolorOpa, bg_img_recolor_opa, lv_opa_t);
   LvPPStyleProxy(bgImgTiled, bg_img_tiled, bool);
 
+  LvPPStyleProxy(borderColor, border_color, lv_color_t);
+  LvPPStyleProxy(borderColorFiltered, border_color_filtered, lv_color_t);
+  LvPPStyleProxy(borderOpa, border_opa, lv_opa_t);
+  LvPPStyleProxy(borderWidth, border_width, lv_coord_t);
+  LvPPStyleProxy(borderSide, border_side, lv_border_side_t);
+  LvPPStyleProxy(borderPost, border_post, bool);
+
   LvPPStyleProxy(textColor, text_color, lv_color_t);
   LvPPStyleProxy(textColorFiltered, text_color_filtered, lv_color_t);
   LvPPStyleProxy(textOpa, text_opa, lv_opa_t);
@@ -83,5 +90,12 @@ public:
   LvPPStyleProxy(imgRecolorFiltered, img_recolor_filtered, lv_color_t);
   LvPPStyleProxy(imgRecolorOpa, img_recolor_opa, lv_opa_t);
 
-  bool empty() { return lv_style_is_empty(&m_Style); }
+  LvPPStyleProxy(outlineWidth, outline_width, lv_coord_t);
+  LvPPStyleProxy(outlineColor, outline_color, lv_color_t);
+  LvPPStyleProxy(outlineColorFiltered, outline_color_filtered, lv_color_t);
+  LvPPStyleProxy(outlineOpa, outline_opa, lv_opa_t);
+  LvPPStyleProxy(outlinePad, outline_pad, lv_coord_t);
+
+  void removeProp(lv_style_prop_t prop) { lv_style_remove_prop(&m_Style, prop); }
+  bool isEmpty() { return lv_style_is_empty(&m_Style); }
 };
