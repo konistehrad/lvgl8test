@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <lvgl.h>
 #include "app_hal.h"
+#include "LvLine.hpp"
 #include "Waves.hpp"
 
 static WaveScreen mainScreen;

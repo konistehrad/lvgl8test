@@ -44,6 +44,16 @@
         "cinttypes": "cpp",
         "utility": "cpp",
         "typeinfo": "cpp",
-        "arduino.h": "c"
+        "arduino.h": "c",
+        "__functional_base": "cpp",
+        "__functional_base_03": "cpp",
+        "__hash_table": "cpp",
+        "__tuple": "cpp",
+        "chrono": "cpp",
+        "compare": "cpp",
+        "iterator": "cpp",
+        "random": "cpp",
+        "ratio": "cpp",
+        "locale": "cpp"
     }
 }
