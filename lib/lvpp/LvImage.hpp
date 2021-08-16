@@ -12,16 +12,13 @@
   void lvpropname(lvproptype val) { lv_img_set_##lvpropname(m_RawObj, val); }
 
 class LvImage: public LvObj {
-protected:
-	lv_img_dsc_t* m_ImgDsc;
-  lv_obj_t* createBacking() override { 
-    lv_obj_t* img = lv_img_create(lv_scr_act());
-    lv_img_set_src(img, m_ImgDsc);
-    return img;
-  }
 public:
-	LvImage(LvObj& parent, lv_img_dsc_t* descriptor): m_ImgDsc(descriptor), LvObj(parent) {}
-	LvImage(lv_img_dsc_t* descriptor): m_ImgDsc(descriptor), LvObj() {}
+	LvImage(lv_obj_t* parent, lv_img_dsc_t* descriptor): LvObj(parent, &lv_img_create){
+    lv_img_set_src(m_RawObj, descriptor);
+  }
+	LvImage(lv_img_dsc_t* descriptor): LvObj(&lv_img_create) {
+    lv_img_set_src(m_RawObj, descriptor);
+  }
   LvPPImgProxySimple(angle, int32_t);
   LvPPImgProxySimple(antialias, bool);
   LvPPImgProxy(offsetX, offset_x, lv_coord_t);

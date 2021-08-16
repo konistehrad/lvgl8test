@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "LvObj.hpp"
 
 #define LvPPLabelProxySimple(lvpropname, lvproptype) \
@@ -10,14 +11,13 @@
   lvproptype lvcamelname() { return lv_label_get_##lvpropname(m_RawObj); } \
   void lvcamelname(lvproptype val) { lv_label_set_##lvpropname(m_RawObj, val); }
 
-class LvLabel: LvObj {
+class LvLabel: public LvObj {
 protected:
-  lv_obj_t* createBacking() override { 
-    return lv_label_create(rawParent()); 
-  }
 public:
-  LvLabel(): LvObj() {}
-  LvLabel(LvObj& parent) : LvObj(parent) {}
+  LvLabel(): LvObj(&lv_label_create) {}
+  LvLabel(const char* txt): LvObj(&lv_label_create) {text(txt, false);}
+  LvLabel(lv_obj_t* parent) : LvObj(parent, &lv_label_create) {}
+  LvLabel(lv_obj_t* parent, const char* txt) : LvObj(parent, &lv_label_create) {text(txt, false);}
   LvPPLabelProxy(longMode, long_mode, lv_label_long_mode_t);
   LvPPLabelProxySimple(recolor, bool);
   char* text() { return lv_label_get_text(m_RawObj); }
