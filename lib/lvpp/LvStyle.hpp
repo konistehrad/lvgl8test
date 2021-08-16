@@ -13,6 +13,7 @@ protected:
   lv_style_t m_Style;
 public:
   LvStyle() { lv_style_init(&m_Style); }
+  ~LvStyle() { lv_style_reset(&m_Style); }
   operator lv_style_t*() { return &m_Style; }
 
   LvPPStyleProxySimple(width, lv_coord_t);

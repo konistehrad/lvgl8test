@@ -86,6 +86,7 @@ class WaveScreen
 {
 public:
   WaveScreen() : m_Timer(NULL), m_Obj(NULL) {}
+  void init() { init(lv_scr_act()); }
   void init(lv_obj_t* parent) {
     for(int i = 0; i < WAVE_COUNT; ++i)
       m_Waves[i].init(parent);

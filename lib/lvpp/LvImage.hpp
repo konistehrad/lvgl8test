@@ -32,7 +32,4 @@ public:
   }
   LvPPImgProxySimple(src, const void*);
   LvPPImgProxySimple(zoom, uint16_t);
-
-  void xxxx() {
-  }
 };

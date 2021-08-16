@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <lvgl.h>
 #include "app_hal.h"
+#include "LvScreen.hpp"
 #include "LvLabel.hpp"
 #include "LvLine.hpp"
 #include "LvStyle.hpp"
 #include "LvTheme.hpp"
+#include "SysBar.hpp"
 #include "Waves.hpp"
 
 static WaveScreen mainScreen;
@@ -13,6 +15,7 @@ static LvStyle styleBack;
 static LvStyle styleTitle;
 static LvStyle styleAlpha8;
 static LvLabel* label;
+static SysBar* sysbar;
 
 void build_ui(void) {
   lv_theme_default_init(
@@ -29,13 +32,15 @@ void build_ui(void) {
   styleAlpha8.textFont(&lv_font_montserrat_26);
   styleAlpha8.imgRecolorOpa(LV_OPA_COVER);
   styleAlpha8.imgRecolor(lv_theme_get_color_primary(NULL));
-  lv_obj_add_style(lv_scr_act(), styleBack, 0);
-  mainScreen.init(lv_scr_act());
+  LvScreen::active().addStyle(styleBack);
+  mainScreen.init(LvScreen::active());
 
   label = new LvLabel();
   label->text("This is a test.");
   label->addStyle(styleTitle);
   label->center();
+
+  sysbar = new SysBar();
 }
 extern "C" {
   void setup();
@@ -43,7 +48,7 @@ extern "C" {
 }
 
 void setup() {
-  lv_init();
+  LvObj::init();
 
   hal_setup();
 

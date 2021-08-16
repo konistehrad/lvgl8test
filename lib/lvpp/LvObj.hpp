@@ -27,7 +27,7 @@ public:
     if(sys == NULL) { sys = new LvObj(lv_layer_sys(), NULL); }
     return *sys;
   }
-  static void initLvPP() {
+  static void init() {
     static bool inited = false;
     if(inited) return;
     lv_init();
@@ -46,6 +46,10 @@ protected:
 public:
   LvObj() : LvObj(lv_scr_act(), &lv_obj_create) {  }
   LvObj(lv_obj_t* parent) : LvObj(parent, &lv_obj_create) { }
+  ~LvObj() { 
+    if(m_RawObj != NULL) lv_obj_del(m_RawObj); 
+    m_RawObj = NULL; 
+  }
   bool valid() { return m_RawObj != NULL && lv_obj_is_valid(m_RawObj); }
   operator lv_obj_t*() { return m_RawObj; }
   void addStyle(lv_style_t* style, lv_style_selector_t selector = 0) { lv_obj_add_style(m_RawObj, style, selector); }
