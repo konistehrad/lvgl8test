@@ -4,12 +4,16 @@
 #include "LvStyle.hpp"
 
 #define LvPPObjStyleProxyPart(lvcamelname, lvunderscorename, lvproptype) \
-  lvproptype style##lvcamelname(uint32_t part) { return lv_obj_get_style_##lvunderscorename(m_RawObj, part) } \
+  lvproptype style##lvcamelname(uint32_t part) { return lv_obj_get_style_##lvunderscorename(m_RawObj, part); } \
   void style##lvcamelname(lvproptype val, uint32_t part) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, part); }
 
 #define LvPPObjStyleProxySelect(lvcamelname, lvunderscorename, lvproptype) \
   lvproptype style##lvcamelname(lv_style_selector_t selector) { return lv_obj_get_style_##lvunderscorename(m_RawObj, selector); } \
   void style##lvcamelname(lvproptype val, lv_style_selector_t selector) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, selector); }
+
+#define LvPPObjProxy(lvcamelname, lvunderscorename, lvproptype) \
+  lvproptype lvcamelname() { return lv_obj_get_##lvunderscorename(m_RawObj); } \
+  void lvcamelname(lvproptype val) { lv_obj_set_##lvunderscorename(m_RawObj, val); }
 
 #define LvPPObjProxySimple(lvpropname, lvproptype) \
   lvproptype lvpropname() { return lv_obj_get_##lvpropname(m_RawObj); } \
@@ -70,6 +74,17 @@ public:
   void clearFlag(lv_obj_flag_t flag) { lv_obj_clear_flag(m_RawObj, flag); }
   void center() { lv_obj_center(m_RawObj); }
   void layout(uint32_t l) { lv_obj_set_layout(m_RawObj, l); }
+  void flexAlign(lv_flex_align_t main_place, lv_flex_align_t cross_place, lv_flex_align_t track_place) {
+    lv_obj_set_flex_align(m_RawObj, main_place, cross_place, track_place);
+  }
+  void flexFlow(lv_flex_flow_t flow) { lv_obj_set_flex_flow(m_RawObj, flow); }
+  void flexGrow(uint8_t grow) { lv_obj_set_flex_grow(m_RawObj, grow); }
+
+  LvPPObjStyleProxyPart(FlexCrossPlace, flex_cross_place, lv_flex_align_t);
+  LvPPObjStyleProxyPart(FlexFlow, flex_flow, lv_flex_flow_t);
+  LvPPObjStyleProxyPart(FlexGrow, flex_grow, uint8_t);
+  LvPPObjStyleProxyPart(FlexMainPlace, flex_main_place, lv_flex_align_t);
+  LvPPObjStyleProxyPart(FlexTrackPlace, flex_track_place, lv_flex_align_t);
 
   LvPPObjStyleProxySelect(Width, width, lv_coord_t);
   LvPPObjStyleProxySelect(MinWidth, min_width, lv_coord_t);

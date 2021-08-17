@@ -16,6 +16,9 @@ public:
   ~LvStyle() { lv_style_reset(&m_Style); }
   operator lv_style_t*() { return &m_Style; }
 
+  void removeProp(lv_style_prop_t prop) { lv_style_remove_prop(&m_Style, prop); }
+  bool isEmpty() { return lv_style_is_empty(&m_Style); }
+
   LvPPStyleProxySimple(width, lv_coord_t);
   LvPPStyleProxy(minWidth, min_width, lv_coord_t);
   LvPPStyleProxy(maxWidth, max_width, lv_coord_t);
@@ -104,7 +107,10 @@ public:
   LvPPStyleProxy(lineOpa, line_opa, lv_opa_t);
   LvPPStyleProxy(lineRounded, line_rounded, lv_coord_t);
   LvPPStyleProxy(lineWidth, line_width, lv_coord_t);
-  
-  void removeProp(lv_style_prop_t prop) { lv_style_remove_prop(&m_Style, prop); }
-  bool isEmpty() { return lv_style_is_empty(&m_Style); }
+
+  LvPPStyleProxy(flexCrossPlace, flex_cross_place, lv_flex_align_t);
+  LvPPStyleProxy(flexFlow, flex_flow, lv_flex_flow_t);
+  LvPPStyleProxy(flexGrow, flex_grow, uint8_t);
+  LvPPStyleProxy(flexMainPlace, flex_main_place, lv_flex_align_t);
+  LvPPStyleProxy(flexTrackPlace, flex_track_place, lv_flex_align_t);
 };
