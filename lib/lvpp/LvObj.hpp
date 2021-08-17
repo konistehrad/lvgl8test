@@ -69,6 +69,7 @@ public:
   void addFlag(lv_obj_flag_t flag) { lv_obj_add_flag(m_RawObj, flag); }
   void clearFlag(lv_obj_flag_t flag) { lv_obj_clear_flag(m_RawObj, flag); }
   void center() { lv_obj_center(m_RawObj); }
+  void layout(uint32_t l) { lv_obj_set_layout(m_RawObj, l); }
 
   LvPPObjStyleProxySelect(Width, width, lv_coord_t);
   LvPPObjStyleProxySelect(MinWidth, min_width, lv_coord_t);

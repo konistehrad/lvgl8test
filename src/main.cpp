@@ -55,7 +55,7 @@ void build_ui(void) {
   label->center();
   */
 
-  // sysbar = new SysBar();
+  sysbar = new SysBar();
 
   mainScreen->start();
 }
