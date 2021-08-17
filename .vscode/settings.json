@@ -62,6 +62,8 @@
         "string_view": "cpp",
         "thread": "cpp",
         "complex": "cpp",
-        "numbers": "cpp"
+        "numbers": "cpp",
+        "freertos.h": "c",
+        "freertosconfig.h": "c"
     }
 }

@@ -1,6 +1,7 @@
 #ifndef DRIVER_H
 #define DRIVER_H
 
+#include <FreeRTOS.h>
 #include <Arduino.h>
 
 #ifdef __cplusplus

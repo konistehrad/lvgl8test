@@ -48,5 +48,5 @@ void hal_setup() {
 
 void hal_loop() {
   lv_task_handler();
-  delay(1);
+  delay(5);
 }

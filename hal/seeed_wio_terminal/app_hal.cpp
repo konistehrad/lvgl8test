@@ -8,25 +8,39 @@
 #define SCANLINES_PER_BUFFER (10)
 #define BUFFER_TOTAL_SIZE (LV_HOR_RES * SCANLINES_PER_BUFFER)
 
+
 static LGFX lcd; 
-void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
+static void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p) {
   uint32_t w = (area->x2 - area->x1 + 1);
   uint32_t h = (area->y2 - area->y1 + 1);
+  lcd.startWrite();
   lcd.pushImageDMA(area->x1, area->y2, w, h, &color_p->full);
   lv_disp_flush_ready(disp);
 }
 
-void vApplicationTickHook(void) {
- lv_tick_inc(1);
+static void TickTask(void* unused) {
+  while(true) {
+    delay(1);
+    lv_tick_inc(1);
+  }
 }
+
+// setup and loop code block
+extern void _real_body();
+static void ClientTask(void* unused) {
+  delay(100);
+  Serial.println("Client task executing!");
+  _real_body();
+}
+
+TaskHandle_t tickTask = NULL;
+TaskHandle_t clientTask = NULL;
 
 void hal_setup() {
   static lv_disp_draw_buf_t disp_buf;
   static lv_color_t buf1[BUFFER_TOTAL_SIZE];
   static lv_color_t buf2[BUFFER_TOTAL_SIZE];
   static lv_disp_drv_t disp_drv;
-
-  // esp_register_freertos_tick_hook((esp_freertos_tick_cb_t)lv_tick_task); 
 
   lcd.init();
   lcd.initDMA();
@@ -43,9 +57,39 @@ void hal_setup() {
   lv_disp_drv_register(&disp_drv);
 
   lcd.startWrite(); // we own this SPI line.
+
+  BaseType_t created = xTaskCreate(&TickTask, "Tick", 255, NULL, (configMAX_PRIORITIES - 1), &tickTask);
+  if(created != pdPASS) {
+    Serial.print("Failed to start tick task: "); Serial.println(created);
+    while(1) {
+      delay(500); digitalWrite(LED_BUILTIN, HIGH);
+      delay(500); digitalWrite(LED_BUILTIN, LOW);
+    }
+  }
+}
+
+
+void _wrap_body()
+{
+  Serial.begin(115200);
+
+  while(!Serial && millis() < 5000) delay(10);
+
+  BaseType_t created = xTaskCreate(&ClientTask, "client", 20480/2, NULL, (configMAX_PRIORITIES - 2), &clientTask);
+  if(created != pdPASS) {
+    Serial.print("Failed to start client task: "); Serial.println(created);
+    while(1) {
+      delay(115); digitalWrite(LED_BUILTIN, HIGH);
+      delay(115); digitalWrite(LED_BUILTIN, LOW);
+    }
+  }
+
+  vTaskStartScheduler();
+  while(1) ;; 
+  return;
 }
 
 void hal_loop() {
+  delay(5);
   lv_task_handler();
-  delay(1);
 }
