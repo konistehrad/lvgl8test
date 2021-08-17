@@ -43,15 +43,20 @@ void build_ui(void) {
   styleAlpha8.textFont(&lv_font_montserrat_26);
   styleAlpha8.imgRecolorOpa(LV_OPA_COVER);
   styleAlpha8.imgRecolor(lv_theme_get_color_primary(NULL));
-  LvScreen::active().addStyle(styleBack);
-  mainScreen = new WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>(LvScreen::active());
 
+  mainScreen = new WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>(WAVE_FPS);
+  mainScreen->addStyle(styleBack);
+  mainScreen->load();
+
+  /*
   label = new LvLabel();
   label->text("This is a test.");
   label->addStyle(styleTitle);
   label->center();
+  */
 
   // sysbar = new SysBar();
+
   mainScreen->start();
 }
 extern "C" {

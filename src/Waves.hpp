@@ -65,7 +65,7 @@ private:
 };
 
 template <int NWaves, int NPoints>
-class WaveScreen
+class WaveScreen: public LvScreen
 {
 private:
   static void Tick(lv_timer_t* timer) {
@@ -76,11 +76,12 @@ private:
 public:
   static constexpr int size() { return NWaves; }
 public:
-  WaveScreen(lv_obj_t* parent, int fps = 30) 
-    : m_Spf(1000.f / (float)fps),
+  WaveScreen(int fps = 30) 
+    : LvScreen(),
+      m_Spf(1000.f / (float)fps),
       m_Timer(NULL) {
     for(int i = 0; i < NWaves; ++i) {
-      m_Waves[i] = new Wave<NPoints>(parent, i);
+      m_Waves[i] = new Wave<NPoints>(m_RawObj, i);
       m_Waves[i]->tick();
     }
   }

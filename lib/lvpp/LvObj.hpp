@@ -35,19 +35,20 @@ public:
   }
 protected:
   lv_obj_t* m_RawObj;
+  lv_obj_t* (*m_Factory)(lv_obj_t*);
 
-  LvObj(lv_obj_t* rawOrParent, lv_obj_t* (*factory)(lv_obj_t*)) {
-    if(factory != NULL)
-      m_RawObj = factory(rawOrParent);
-    else
-      m_RawObj = rawOrParent;
+  LvObj(lv_obj_t* rawOrParent, lv_obj_t* (*factory)(lv_obj_t*)) : m_Factory(factory) {
+    m_RawObj = (factory == NULL ? rawOrParent : factory(rawOrParent));
   }
   LvObj(lv_obj_t* (*factory)(lv_obj_t*)) : LvObj(lv_scr_act(), factory) {}
 public:
   LvObj() : LvObj(lv_scr_act(), &lv_obj_create) {  }
   LvObj(lv_obj_t* parent) : LvObj(parent, &lv_obj_create) { }
   ~LvObj() { 
-    if(m_RawObj != NULL) lv_obj_del(m_RawObj); 
+    // check m_Factory to make sure we created the backing
+    // object, if not someone else did and it's not our job.
+    // (active screen?)
+    if(m_RawObj != NULL && m_Factory != NULL) lv_obj_del(m_RawObj); 
     m_RawObj = NULL; 
   }
   bool valid() { return m_RawObj != NULL && lv_obj_is_valid(m_RawObj); }
