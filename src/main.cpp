@@ -10,7 +10,18 @@
 #include "SysBar.hpp"
 #include "Waves.hpp"
 
-static WaveScreen mainScreen;
+
+#ifndef WAVE_FPS
+  #define WAVE_FPS 30
+#endif
+#ifndef WAVE_COUNT
+  #define WAVE_COUNT 6
+#endif
+#ifndef WAVE_POINT_COUNT
+  #define WAVE_POINT_COUNT 40
+#endif
+
+static WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>* mainScreen;
 static LvStyle styleBack;
 static LvStyle styleTitle;
 static LvStyle styleAlpha8;
@@ -33,14 +44,15 @@ void build_ui(void) {
   styleAlpha8.imgRecolorOpa(LV_OPA_COVER);
   styleAlpha8.imgRecolor(lv_theme_get_color_primary(NULL));
   LvScreen::active().addStyle(styleBack);
-  mainScreen.init(LvScreen::active());
+  mainScreen = new WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>(LvScreen::active());
 
   label = new LvLabel();
   label->text("This is a test.");
   label->addStyle(styleTitle);
   label->center();
 
-  sysbar = new SysBar();
+  // sysbar = new SysBar();
+  mainScreen->start();
 }
 extern "C" {
   void setup();
@@ -49,7 +61,7 @@ extern "C" {
 
 void setup() {
   LvObj::init();
-
+  
   hal_setup();
 
   build_ui();

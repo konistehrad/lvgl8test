@@ -97,6 +97,14 @@ public:
   LvPPStyleProxy(outlineOpa, outline_opa, lv_opa_t);
   LvPPStyleProxy(outlinePad, outline_pad, lv_coord_t);
 
+  LvPPStyleProxy(lineColor, line_color, lv_color_t);
+  LvPPStyleProxy(lineColorFiltered, line_color_filtered, lv_color_t);
+  LvPPStyleProxy(lineDashGap, line_dash_gap, lv_coord_t);
+  LvPPStyleProxy(lineDashWidth, line_dash_width, lv_coord_t);
+  LvPPStyleProxy(lineOpa, line_opa, lv_opa_t);
+  LvPPStyleProxy(lineRounded, line_rounded, lv_coord_t);
+  LvPPStyleProxy(lineWidth, line_width, lv_coord_t);
+  
   void removeProp(lv_style_prop_t prop) { lv_style_remove_prop(&m_Style, prop); }
   bool isEmpty() { return lv_style_is_empty(&m_Style); }
 };

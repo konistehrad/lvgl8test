@@ -54,6 +54,14 @@
         "iterator": "cpp",
         "random": "cpp",
         "ratio": "cpp",
-        "locale": "cpp"
+        "locale": "cpp",
+        "__config": "cpp",
+        "atomic": "cpp",
+        "mutex": "cpp",
+        "queue": "cpp",
+        "string_view": "cpp",
+        "thread": "cpp",
+        "complex": "cpp",
+        "numbers": "cpp"
     }
 }
