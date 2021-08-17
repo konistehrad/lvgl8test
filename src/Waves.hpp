@@ -101,7 +101,7 @@ public:
   }
 
 private:
-  lv_timer_t* m_Timer;
   int m_Spf;
+  lv_timer_t* m_Timer;
   Wave<NPoints>* m_Waves[NWaves];
 };
