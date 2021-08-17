@@ -6,10 +6,8 @@
 #include "LvLabel.hpp"
 #include "LvLine.hpp"
 #include "LvStyle.hpp"
-#include "LvTheme.hpp"
 #include "SysBar.hpp"
 #include "Waves.hpp"
-
 
 #ifndef WAVE_FPS
   #define WAVE_FPS 30
@@ -47,13 +45,6 @@ void build_ui(void) {
   mainScreen = new WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>(WAVE_FPS);
   mainScreen->addStyle(styleBack);
   mainScreen->load();
-
-  /*
-  label = new LvLabel();
-  label->text("This is a test.");
-  label->addStyle(styleTitle);
-  label->center();
-  */
 
   sysbar = new SysBar();
 

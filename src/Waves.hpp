@@ -39,7 +39,7 @@ public:
     m_Style.lineWidth(m_Index % 3 == 0 ? 2 : 1);
     m_Style.lineOpa(WAVE_OPACITY);
     LvLine<NPoints>::addStyle(m_Style);
-
+    LvLine<NPoints>::addFlag(LV_OBJ_FLAG_IGNORE_LAYOUT);
     for(int i = 0; i < NPoints; ++i) {
       LvLine<NPoints>::m_Points[i].x = r(i) * WAVE_END_POS;
     }

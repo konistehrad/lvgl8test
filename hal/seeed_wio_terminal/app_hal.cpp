@@ -36,10 +36,10 @@ static void ClientTask(void* unused) {
 TaskHandle_t tickTask = NULL;
 TaskHandle_t clientTask = NULL;
 
+static lv_color_t buf1[BUFFER_TOTAL_SIZE] __attribute__((aligned(16)));
+static lv_color_t buf2[BUFFER_TOTAL_SIZE] __attribute__((aligned(16)));
 void hal_setup() {
   static lv_disp_draw_buf_t disp_buf;
-  static lv_color_t buf1[BUFFER_TOTAL_SIZE];
-  static lv_color_t buf2[BUFFER_TOTAL_SIZE];
   static lv_disp_drv_t disp_drv;
 
   lcd.init();
@@ -68,12 +68,11 @@ void hal_setup() {
   }
 }
 
-
 void _wrap_body()
 {
   Serial.begin(115200);
 
-  while(!Serial && millis() < 5000) delay(10);
+  while(!Serial && millis() < 2000) delay(10);
 
   BaseType_t created = xTaskCreate(&ClientTask, "client", 20480/2, NULL, (configMAX_PRIORITIES - 2), &clientTask);
   if(created != pdPASS) {

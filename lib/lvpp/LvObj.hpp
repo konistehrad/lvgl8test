@@ -60,6 +60,7 @@ public:
   void addStyle(lv_style_t* style, lv_style_selector_t selector = 0) { lv_obj_add_style(m_RawObj, style, selector); }
   void removeStyle(lv_style_t* style, lv_style_selector_t selector = 0) { lv_obj_remove_style(m_RawObj, style, selector); }
   void removeStyleAll() { lv_obj_remove_style_all(m_RawObj); }
+  void replaceStyle(lv_style_t* style, lv_style_selector_t selector = 0) { removeStyleAll(); addStyle(style, selector); }
   void align(lv_align_t alignment = LV_ALIGN_DEFAULT, lv_coord_t xOfs = 0, lv_coord_t yOfs = 0) { lv_obj_align(m_RawObj, alignment, xOfs, yOfs); }
   void alignTo(lv_obj_t* obj, lv_align_t alignment = LV_ALIGN_DEFAULT, lv_coord_t xOfs = 0, lv_coord_t yOfs = 0) { lv_obj_align_to(m_RawObj, obj, alignment, xOfs, yOfs); }
   void moveForeground() { lv_obj_move_foreground(m_RawObj); }
