@@ -8,8 +8,8 @@
   void style##lvcamelname(lvproptype val, uint32_t part) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, part); }
 
 #define LvPPObjStyleProxySelect(lvcamelname, lvunderscorename, lvproptype) \
-  lvproptype style##lvcamelname(lv_style_selector_t selector) { return lv_obj_get_style_##lvunderscorename(m_RawObj, selector); } \
-  void style##lvcamelname(lvproptype val, lv_style_selector_t selector) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, selector); }
+  lvproptype style##lvcamelname(lv_style_selector_t selector = 0) { return lv_obj_get_style_##lvunderscorename(m_RawObj, selector); } \
+  void style##lvcamelname(lvproptype val, lv_style_selector_t selector = 0) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, selector); }
 
 #define LvPPObjProxy(lvcamelname, lvunderscorename, lvproptype) \
   lvproptype lvcamelname() { return lv_obj_get_##lvunderscorename(m_RawObj); } \
