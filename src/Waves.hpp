@@ -2,6 +2,7 @@
 
 #include <math.h>
 #include <lvgl.h>
+#include "LvTimer.hpp"
 #include "LvStyle.hpp"
 #include "LvLine.hpp"
 
@@ -10,8 +11,8 @@
 #define WAVE_PALETTE (LV_PALETTE_TEAL)
 #define WAVE_GRADIENT_START (lv_palette_darken(WAVE_PALETTE, 4))
 #define WAVE_GRADIENT_END (lv_palette_darken(WAVE_PALETTE, 3))
-#define WAVE_COLOR (lv_palette_darken(WAVE_PALETTE, 3))
-#define WAVE_OPACITY (LV_OPA_100)
+#define WAVE_COLOR (lv_color_white())
+#define WAVE_OPACITY (LV_OPA_10)
 
 static uint32_t g_seed = 2378462;
 inline int fast_rand(void) { g_seed = (214013*g_seed+2531011); return (g_seed>>16)&0x7FFF; }
@@ -75,33 +76,25 @@ private:
   }
 public:
   static constexpr int size() { return NWaves; }
+private:
+  uint32_t m_Spf;
+  LvTimer m_Timer;
+  Wave<NPoints>* m_Waves[NWaves];
 public:
   WaveScreen(int fps = 30) 
     : LvScreen(),
       m_Spf(1000.f / (float)fps),
-      m_Timer(NULL) {
+      m_Timer(WaveScreen<NWaves,NPoints>::Tick, m_Spf, LvTimer::RepeatInfinite, (void*)this) {
     for(int i = 0; i < NWaves; ++i) {
       m_Waves[i] = new Wave<NPoints>(m_RawObj, i);
       m_Waves[i]->tick();
     }
+    m_Timer.pause();
   }
   ~WaveScreen() {
     stop();
     for(int i = 0; i < NWaves; ++i) delete m_Waves[i];
   }
-  void start() {
-    if(m_Timer != NULL) return;
-    m_Timer = lv_timer_create(WaveScreen::Tick, m_Spf, (void*)this);
-    lv_timer_set_repeat_count(m_Timer, -1);
-  }
-  void stop() {
-    if(m_Timer == NULL) return;
-    lv_timer_del(m_Timer);
-    m_Timer = NULL;
-  }
-
-private:
-  int m_Spf;
-  lv_timer_t* m_Timer;
-  Wave<NPoints>* m_Waves[NWaves];
+  void start() { m_Timer.resume(); }
+  void stop() { m_Timer.pause(); }
 };

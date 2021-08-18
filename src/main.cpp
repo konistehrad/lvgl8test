@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <lvgl.h>
 #include "app_hal.h"
+#include "LvAnim.hpp"
 #include "LvScreen.hpp"
 #include "LvLabel.hpp"
 #include "LvLine.hpp"
 #include "LvStyle.hpp"
+#include "LvStyleTransition.hpp"
 #include "SysBar.hpp"
 #include "Waves.hpp"
 
@@ -25,6 +27,8 @@ static LvStyle styleTitle;
 static LvStyle styleAlpha8;
 static LvLabel* label;
 static SysBar* sysbar;
+static LvStyleTransition<LV_STYLE_BG_COLOR> transitionBg(LvAnim::pathLinear, 1000);
+static LvTimer* testTimer;
 
 void build_ui(void) {
   lv_theme_default_init(
@@ -36,6 +40,7 @@ void build_ui(void) {
   );
 
   styleBack.bgColor(WAVE_GRADIENT_START);
+  // styleBack.transition(transitionBg);
   styleTitle.textFont(&lv_font_montserrat_26);
   styleTitle.textColor(lv_theme_get_color_primary(NULL));
   styleAlpha8.textFont(&lv_font_montserrat_26);
@@ -45,10 +50,15 @@ void build_ui(void) {
   mainScreen = new WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>(WAVE_FPS);
   mainScreen->addStyle(styleBack);
   mainScreen->load();
+  mainScreen->styleTransition(transitionBg);
 
   sysbar = new SysBar();
 
   mainScreen->start();
+
+  testTimer = new LvTimer([](auto t){ 
+    mainScreen->styleBgColor(lv_palette_main(LV_PALETTE_BLUE));
+  }, 1000);
 }
 extern "C" {
   void setup();

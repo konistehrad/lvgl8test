@@ -4,8 +4,8 @@
 #include "LvStyle.hpp"
 
 #define LvPPObjStyleProxyPart(lvcamelname, lvunderscorename, lvproptype) \
-  lvproptype style##lvcamelname(uint32_t part) { return lv_obj_get_style_##lvunderscorename(m_RawObj, part); } \
-  void style##lvcamelname(lvproptype val, uint32_t part) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, part); }
+  lvproptype style##lvcamelname(uint32_t part = 0) { return lv_obj_get_style_##lvunderscorename(m_RawObj, part); } \
+  void style##lvcamelname(lvproptype val, uint32_t part = 0) { lv_obj_set_style_##lvunderscorename(m_RawObj, val, part); }
 
 #define LvPPObjStyleProxySelect(lvcamelname, lvunderscorename, lvproptype) \
   lvproptype style##lvcamelname(lv_style_selector_t selector = 0) { return lv_obj_get_style_##lvunderscorename(m_RawObj, selector); } \
@@ -124,7 +124,8 @@ public:
 
   LvPPObjStyleProxySelect(AnimTime, anim_time, uint32_t);
   LvPPObjStyleProxySelect(AnimSpeed, anim_speed, uint32_t);
-  // LvPPObjStyleProxySelect(Transition, transition, lv_style_transition_dsc_t*);
+  void styleTransition(const lv_style_transition_dsc_t* t, lv_style_selector_t selector = 0) { lv_obj_set_style_transition(m_RawObj, t, selector); }
+  const lv_style_transition_dsc_t* styleTransition(uint32_t part = 0) { return lv_obj_get_style_transition(m_RawObj, part); }
 
   LvPPObjStyleProxySelect(BlendMode, blend_mode, lv_blend_mode_t);
   LvPPObjStyleProxySelect(Layout, layout, uint16_t);

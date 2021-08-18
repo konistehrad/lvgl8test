@@ -10,6 +10,7 @@ private:
   LvObj m_Center;
   LvObj m_Right;
   LvLabel m_TimeLabel;
+  LvLabel m_BtLabel;
   LvLabel m_WifiLabel;
   LvLabel m_BatteryLabel;
   LvStyle m_ContainerStyle;
@@ -20,6 +21,7 @@ public:
     m_Center(m_RawObj),
     m_Right(m_RawObj),
     m_TimeLabel(m_Center),
+    m_BtLabel(m_Right),
     m_WifiLabel(m_Right),
     m_BatteryLabel(m_Right),
     m_ContainerStyle()
@@ -55,6 +57,7 @@ public:
     m_Center.flexGrow(1);
     m_Center.flexAlign(LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
 
+    m_BtLabel.text(LV_SYMBOL_BLUETOOTH);
     m_WifiLabel.text(LV_SYMBOL_WIFI);
     m_BatteryLabel.text(LV_SYMBOL_BATTERY_FULL);
     m_TimeLabel.text("13:42");
