@@ -57,6 +57,8 @@ public:
   }
   bool valid() { return m_RawObj != NULL && lv_obj_is_valid(m_RawObj); }
   operator lv_obj_t*() { return m_RawObj; }
+  void addState(lv_state_t state) { lv_obj_add_state(m_RawObj, state); }
+  void clearState(lv_state_t state) { lv_obj_clear_state(m_RawObj, state); }
   void addStyle(lv_style_t* style, lv_style_selector_t selector = 0) { lv_obj_add_style(m_RawObj, style, selector); }
   void removeStyle(lv_style_t* style, lv_style_selector_t selector = 0) { lv_obj_remove_style(m_RawObj, style, selector); }
   void removeStyleAll() { lv_obj_remove_style_all(m_RawObj); }

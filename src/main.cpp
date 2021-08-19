@@ -23,12 +23,30 @@
 
 static WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>* mainScreen;
 static LvStyle styleBack;
+static LvStyle styleBackUser1;
 static LvStyle styleTitle;
 static LvStyle styleAlpha8;
-static LvLabel* label;
 static SysBar* sysbar;
+static LvTimer* rollingTimer;
 static LvStyleTransition<LV_STYLE_BG_COLOR> transitionBg(LvAnim::pathLinear, 1000);
-static LvTimer* testTimer;
+
+void addState1(lv_timer_t* t);
+void clearState(lv_timer_t* t) {
+  mainScreen->clearState(LV_STATE_USER_1 | LV_STATE_USER_2 | LV_STATE_USER_3);
+  rollingTimer->callback(addState1);
+}
+void addState3(lv_timer_t* t) { 
+  mainScreen->addState(LV_STATE_USER_3);
+  rollingTimer->callback(clearState);
+}
+void addState2(lv_timer_t* t) { 
+  mainScreen->addState(LV_STATE_USER_2);
+  rollingTimer->callback(addState3);
+}
+void addState1(lv_timer_t* t) { 
+  mainScreen->addState(LV_STATE_USER_1);
+  rollingTimer->callback(addState2);
+}
 
 void build_ui(void) {
   lv_theme_default_init(
@@ -40,7 +58,8 @@ void build_ui(void) {
   );
 
   styleBack.bgColor(WAVE_GRADIENT_START);
-  // styleBack.transition(transitionBg);
+  styleBack.transition(transitionBg);
+
   styleTitle.textFont(&lv_font_montserrat_26);
   styleTitle.textColor(lv_theme_get_color_primary(NULL));
   styleAlpha8.textFont(&lv_font_montserrat_26);
@@ -49,16 +68,19 @@ void build_ui(void) {
 
   mainScreen = new WaveScreen<WAVE_COUNT, WAVE_POINT_COUNT>(WAVE_FPS);
   mainScreen->addStyle(styleBack);
+
+  mainScreen->styleTransition(transitionBg, LV_STATE_USER_1);
+  mainScreen->styleTransition(transitionBg, LV_STATE_USER_2);
+  mainScreen->styleTransition(transitionBg, LV_STATE_USER_3);
+  mainScreen->styleBgColor(lv_palette_main(LV_PALETTE_PURPLE), LV_STATE_USER_1);
+  mainScreen->styleBgColor(lv_palette_main(LV_PALETTE_ORANGE), LV_STATE_USER_2);
+  mainScreen->styleBgColor(lv_palette_main(LV_PALETTE_BLUE), LV_STATE_USER_3);
   mainScreen->load();
-  mainScreen->styleTransition(transitionBg);
+  mainScreen->start();
 
   sysbar = new SysBar();
 
-  mainScreen->start();
-
-  testTimer = new LvTimer([](auto t){ 
-    mainScreen->styleBgColor(lv_palette_main(LV_PALETTE_BLUE));
-  }, 1000);
+  rollingTimer = new LvTimer(addState1, 2000, LvTimer::RepeatInfinite);
 }
 extern "C" {
   void setup();

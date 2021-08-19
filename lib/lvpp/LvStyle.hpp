@@ -9,47 +9,6 @@
   void lvcamelname(lvproptype val) { lv_style_set_##lvunderscorename(&m_Style, val); }
 
 class LvStyle {
-public:
-  static constexpr lv_style_value_t defaultValue(lv_style_prop_t prop) {    
-    lv_style_value_t value {.num = 0};
-    switch(prop) {
-        case LV_STYLE_TRANSFORM_ZOOM:
-            value.num = LV_IMG_ZOOM_NONE;
-            break;
-        case LV_STYLE_BG_COLOR:
-            value.color = lv_color_white();
-            break;
-        case LV_STYLE_OPA:
-        case LV_STYLE_BORDER_OPA:
-        case LV_STYLE_TEXT_OPA:
-        case LV_STYLE_IMG_OPA:
-        case LV_STYLE_BG_IMG_OPA:
-        case LV_STYLE_OUTLINE_OPA:
-        case LV_STYLE_SHADOW_OPA:
-        case LV_STYLE_LINE_OPA:
-        case LV_STYLE_ARC_OPA:
-            value.num = LV_OPA_COVER;
-            break;
-        case LV_STYLE_BG_GRAD_STOP:
-            value.num = 255;
-            break;
-        case LV_STYLE_BORDER_SIDE:
-            value.num = LV_BORDER_SIDE_FULL;
-            break;
-        case LV_STYLE_TEXT_FONT:
-            value.ptr = LV_FONT_DEFAULT;
-            break;
-        case LV_STYLE_MAX_WIDTH:
-        case LV_STYLE_MAX_HEIGHT:
-            value.num = LV_COORD_MAX;
-            break;
-        default:
-            value.ptr = NULL;
-            value.num = 0;
-            break;
-    }
-    return value;
-  }
 protected:
   lv_style_t m_Style;
 public:

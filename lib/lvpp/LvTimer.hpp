@@ -7,7 +7,6 @@ public:
   static constexpr int RepeatInfinite = -1;
   static void enable(bool en) { lv_timer_enable(en); }
   static uint8_t idle() { return lv_timer_get_idle(); }
-
 protected:
   lv_timer_t* m_Timer;
 public:
@@ -27,6 +26,4 @@ public:
   void reset() { lv_timer_reset(m_Timer); }
   void resume() { lv_timer_resume(m_Timer); }
   void pause() { lv_timer_pause(m_Timer); }
-  template <class T> T userData() { return (T)m_Timer->user_data; }
-  template <class T> void userData(T data) { m_Timer->user_data = (void*)data; }
 };
