@@ -126,8 +126,7 @@ public:
 
   LvPPObjStyleProxySelect(AnimTime, anim_time, uint32_t);
   LvPPObjStyleProxySelect(AnimSpeed, anim_speed, uint32_t);
-  void styleTransition(const lv_style_transition_dsc_t* t, lv_style_selector_t selector = 0) { lv_obj_set_style_transition(m_RawObj, t, selector); }
-  const lv_style_transition_dsc_t* styleTransition(uint32_t part = 0) { return lv_obj_get_style_transition(m_RawObj, part); }
+  LvPPObjStyleProxySelect(Transition, transition, const lv_style_transition_dsc_t*);
 
   LvPPObjStyleProxySelect(BlendMode, blend_mode, lv_blend_mode_t);
   LvPPObjStyleProxySelect(Layout, layout, uint16_t);
@@ -170,4 +169,11 @@ public:
   LvPPObjStyleProxySelect(OutlineColorFiltered, outline_color_filtered, lv_color_t);
   LvPPObjStyleProxySelect(OutlineOpa, outline_opa, lv_opa_t);
   LvPPObjStyleProxySelect(OutlinePad, outline_pad, lv_coord_t);
+
+  LvPPObjStyleProxySelect(LineColor, line_color, lv_color_t);
+  LvPPObjStyleProxySelect(LineDashGap, line_dash_gap, lv_coord_t);
+  LvPPObjStyleProxySelect(LineDashWidth, line_dash_width, lv_coord_t);
+  LvPPObjStyleProxySelect(LineOpa, line_opa, lv_opa_t);
+  LvPPObjStyleProxySelect(LineRounded, line_rounded, lv_coord_t);
+  LvPPObjStyleProxySelect(LineWidth, line_width, lv_coord_t);
 };
